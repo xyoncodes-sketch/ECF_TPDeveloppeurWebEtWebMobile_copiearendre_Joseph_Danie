@@ -584,7 +584,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert("Erreur : " + data.error);
                 }
             })
-            .catch(error => console.error('Erreur:', error));
+            .catch(error => {
+                console.warn('API non disponible (Mode démo/statique):', error);
+                alert("Simulation (GitHub Pages) : Merci " + (data.nom || 'Client') + ", votre commande a été validée !");
+                orderForm.reset();
+            });
         });
     }
 

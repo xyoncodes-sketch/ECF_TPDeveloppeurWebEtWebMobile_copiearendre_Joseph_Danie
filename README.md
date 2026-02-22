@@ -11,9 +11,9 @@ Pour travailler sur ce projet, l'environnement suivant est configuré :
 ### 2. Structure du projet
 L'arborescence des fichiers est organisée comme suit :
 - `/` : Racine du projet (contient `index.html`).
-- `/css` : Feuilles de style (`style.css`).
-- `/img` : Images et maquettes (à créer).
-- `/js` : Scripts JavaScript.
+- `/` : Feuilles de style (`style.css`).
+- `/` : Scripts JavaScript (`script.js`).
+- `/img` : Images (à créer).
 
 ### 3. Base de données
 - **SGBD** : MySQL ou MariaDB.

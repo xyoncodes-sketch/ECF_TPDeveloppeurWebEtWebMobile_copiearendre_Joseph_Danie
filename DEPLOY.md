@@ -25,10 +25,8 @@ Respectez l'arborescence suivante pour que les liens fonctionnent :
 ├── api_menus.php
 ├── api_commande.php
 ├── db_connect.php
-├── css/
-│   └── style.css
-└── js/
-    └── script.js
+├── style.css
+└── script.js
 ```
 
 ## 4. Configuration de la Connexion
