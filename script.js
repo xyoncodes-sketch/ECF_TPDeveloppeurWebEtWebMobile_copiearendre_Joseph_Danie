@@ -318,14 +318,6 @@ function renderOrders() {
 
 // --- Gestion Espace Employé ---
 
-// Mock des commandes pour l'employé
-let allOrders = [
-    { id: 101, client: "Jean Dupont", menu: "Menu Noël", date: "2023-12-24", statut: "terminee", prix: 250.00 },
-    { id: 102, client: "Alice Smith", menu: "Buffet Estival", date: "2024-06-15", statut: "accepte", prix: 180.00 },
-    { id: 103, client: "Bob Jones", menu: "Menu Pâques", date: "2024-04-01", statut: "en_attente", prix: 140.00 },
-    { id: 104, client: "Claire V.", menu: "Menu Noël", date: "2024-12-20", statut: "attente_materiel", prix: 300.00 }
-];
-
 function getStatusColor(status) {
     const colors = {
         'en_attente': '#f1c40f', 'accepte': '#3498db', 'en_preparation': '#9b59b6',
@@ -340,50 +332,65 @@ function renderEmployeeOrders() {
     const filterStatus = document.getElementById('filter-status').value;
     const filterClient = document.getElementById('filter-client').value.toLowerCase();
 
-    const filtered = allOrders.filter(o => {
-        return (!filterStatus || o.statut === filterStatus) &&
-               (!filterClient || o.client.toLowerCase().includes(filterClient));
-    });
+    let url = 'api_commande.php?';
+    if (filterStatus) url += `status=${filterStatus}&`;
+    if (filterClient) url += `client=${filterClient}`;
 
-    let html = `<table class="admin-table">
-        <thead><tr><th>ID</th><th>Client</th><th>Menu</th><th>Statut</th><th>Action</th></tr></thead>
-        <tbody>`;
-    
-    filtered.forEach(o => {
-        let nextAction = '';
-        // Logique de changement de statut
-        if (o.statut === 'en_attente') nextAction = `<button class="btn" onclick="updateOrderStatus(${o.id}, 'accepte')">Accepter</button>`;
-        else if (o.statut === 'accepte') nextAction = `<button class="btn" onclick="updateOrderStatus(${o.id}, 'en_preparation')">En prépa</button>`;
-        else if (o.statut === 'en_preparation') nextAction = `<button class="btn" onclick="updateOrderStatus(${o.id}, 'en_cours_livraison')">En livraison</button>`;
-        else if (o.statut === 'en_cours_livraison') nextAction = `<button class="btn" onclick="updateOrderStatus(${o.id}, 'livre')">Livré</button>`;
-        else if (o.statut === 'livre') nextAction = `<button class="btn" onclick="updateOrderStatus(${o.id}, 'attente_materiel')">Matériel prêté</button> <button class="btn" onclick="updateOrderStatus(${o.id}, 'terminee')">Terminer</button>`;
-        else if (o.statut === 'attente_materiel') nextAction = `<button class="btn" onclick="updateOrderStatus(${o.id}, 'terminee')">Matériel rendu</button>`;
+    fetch(url)
+        .then(res => res.json())
+        .then(orders => {
+            let html = `<table class="admin-table">
+                <thead><tr><th>ID</th><th>Client</th><th>Menu</th><th>Statut</th><th>Action</th></tr></thead>
+                <tbody>`;
+            
+            orders.forEach(o => {
+                let nextAction = '';
+                // Logique de changement de statut
+                if (o.statut === 'en_attente') nextAction = `<button class="btn" onclick="updateOrderStatus(${o.id}, 'accepte')">Accepter</button>`;
+                else if (o.statut === 'accepte') nextAction = `<button class="btn" onclick="updateOrderStatus(${o.id}, 'en_preparation')">En prépa</button>`;
+                else if (o.statut === 'en_preparation') nextAction = `<button class="btn" onclick="updateOrderStatus(${o.id}, 'en_cours_livraison')">En livraison</button>`;
+                else if (o.statut === 'en_cours_livraison') nextAction = `<button class="btn" onclick="updateOrderStatus(${o.id}, 'livre')">Livré</button>`;
+                else if (o.statut === 'livre') nextAction = `<button class="btn" onclick="updateOrderStatus(${o.id}, 'attente_materiel')">Matériel prêté</button> <button class="btn" onclick="updateOrderStatus(${o.id}, 'terminee')">Terminer</button>`;
+                else if (o.statut === 'attente_materiel') nextAction = `<button class="btn" onclick="updateOrderStatus(${o.id}, 'terminee')">Matériel rendu</button>`;
 
-        let cancelBtn = (o.statut !== 'terminee' && o.statut !== 'annulee') ? 
-            `<button class="btn-outline" style="font-size:0.8rem; color:#c0392b; border-color:#c0392b;" onclick="openCancelModal(${o.id})">Annuler</button>` : '';
+                let cancelBtn = (o.statut !== 'terminee' && o.statut !== 'annulee') ? 
+                    `<button class="btn-outline" style="font-size:0.8rem; color:#c0392b; border-color:#c0392b;" onclick="openCancelModal(${o.id})">Annuler</button>` : '';
 
-        html += `<tr>
-            <td>#${o.id}</td>
-            <td>${o.client}</td>
-            <td>${o.menu}</td>
-            <td><span class="status-badge" style="background:${getStatusColor(o.statut)}">${o.statut}</span></td>
-            <td>${nextAction} ${cancelBtn}</td>
-        </tr>`;
-    });
-    html += `</tbody></table>`;
-    container.innerHTML = html;
+                html += `<tr>
+                    <td>#${o.id}</td>
+                    <td>${o.client_nom} ${o.client_prenom || ''}</td>
+                    <td>${o.menu_titre || 'Menu #' + o.menu_id}</td>
+                    <td><span class="status-badge" style="background:${getStatusColor(o.statut)}">${o.statut}</span></td>
+                    <td>${nextAction} ${cancelBtn}</td>
+                </tr>`;
+            });
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        })
+        .catch(err => {
+            console.error(err);
+            container.innerHTML = '<p>Erreur de chargement des commandes.</p>';
+        });
 }
 
 function updateOrderStatus(id, newStatus) {
-    // Simulation appel API
-    const order = allOrders.find(o => o.id === id);
-    if (order) {
-        order.statut = newStatus;
-        if (newStatus === 'attente_materiel') {
-            alert(`Email envoyé au client : "Merci de restituer le matériel sous 10 jours ouvrés, sinon 600€ de frais seront appliqués."`);
+    fetch('api_commande.php', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id, statut: newStatus })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            if (newStatus === 'attente_materiel') {
+                alert(`Email envoyé au client : "Merci de restituer le matériel sous 10 jours ouvrés, sinon 600€ de frais seront appliqués."`);
+            }
+            renderEmployeeOrders();
+        } else {
+            alert('Erreur: ' + data.error);
         }
-        renderEmployeeOrders();
-    }
+    })
+    .catch(err => console.error(err));
 }
 
 function openCancelModal(id) {
@@ -433,20 +440,25 @@ function validateReview(index, status) {
 
 function renderEmployeeMenus() {
     const container = document.getElementById('emp-menus-list');
-    let html = `<table class="admin-table"><thead><tr><th>Titre</th><th>Prix</th><th>Stock</th><th>Action</th></tr></thead><tbody>`;
-    mockMenus.forEach(m => {
-        html += `<tr>
-            <td>${m.titre}</td>
-            <td>${m.prix_min_personne}€</td>
-            <td>${m.stock}</td>
-            <td>
-                <button class="btn-outline" onclick="alert('Modifier menu ${m.id}')">Modifier</button>
-                <button class="btn-outline" style="color:red; border-color:red;" onclick="alert('Supprimer menu ${m.id}')">Supprimer</button>
-            </td>
-        </tr>`;
-    });
-    html += `</tbody></table>`;
-    container.innerHTML = html;
+    
+    fetch('api_menus.php')
+        .then(res => res.json())
+        .then(menus => {
+            let html = `<table class="admin-table"><thead><tr><th>Titre</th><th>Prix</th><th>Stock</th><th>Action</th></tr></thead><tbody>`;
+            menus.forEach(m => {
+                html += `<tr>
+                    <td>${m.titre}</td>
+                    <td>${m.prix_min_personne}€</td>
+                    <td>${m.stock}</td>
+                    <td>
+                        <button class="btn-outline" onclick="alert('Modifier menu ${m.id}')">Modifier</button>
+                        <button class="btn-outline" style="color:red; border-color:red;" onclick="alert('Supprimer menu ${m.id}')">Supprimer</button>
+                    </td>
+                </tr>`;
+            });
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        });
 }
 
 // Initialisation au chargement de la page
@@ -603,11 +615,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cancelForm) {
         cancelForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const id = parseInt(document.getElementById('cancel-order-id').value);
-            const order = allOrders.find(o => o.id === id);
-            if(order) order.statut = 'annulee';
-            closeCancelModal();
-            renderEmployeeOrders();
+            const id = document.getElementById('cancel-order-id').value;
+            const motif = document.getElementById('cancel-reason').value;
+            const contact = document.getElementById('cancel-contact').value;
+            
+            fetch('api_commande.php', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id, statut: 'annulee', motif: motif, contact: contact })
+            }).then(() => {
+                closeCancelModal();
+                renderEmployeeOrders();
+            });
         });
     }
 });

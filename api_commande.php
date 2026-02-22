@@ -10,7 +10,7 @@ if ($method === 'GET') {
     $status = $_GET['status'] ?? null;
     $client = $_GET['client'] ?? null;
 
-    $sql = "SELECT * FROM commandes WHERE 1=1";
+    $sql = "SELECT c.*, m.titre as menu_titre FROM commandes c LEFT JOIN menus m ON c.menu_id = m.id WHERE 1=1";
     $params = [];
 
     if ($status) {
@@ -32,7 +32,27 @@ if ($method === 'GET') {
 if ($method === 'PUT') {
     // Mise à jour (Statut ou Annulation)
     $data = json_decode(file_get_contents("php://input"), true);
-    // ... Logique de mise à jour SQL (UPDATE commandes SET statut = ? ...)
+    
+    if (empty($data['id']) || empty($data['statut'])) {
+        http_response_code(400);
+        echo json_encode(["error" => "ID et Statut requis"]);
+        exit;
+    }
+
+    $sql = "UPDATE commandes SET statut = ?";
+    $params = [$data['statut']];
+
+    if (!empty($data['motif'])) {
+        $sql .= ", motif_annulation = ?, mode_contact_annulation = ?";
+        $params[] = $data['motif'];
+        $params[] = $data['contact'] ?? 'Non spécifié';
+    }
+
+    $sql .= " WHERE id = ?";
+    $params[] = $data['id'];
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
     echo json_encode(["success" => true, "message" => "Commande mise à jour"]);
     exit;
 }

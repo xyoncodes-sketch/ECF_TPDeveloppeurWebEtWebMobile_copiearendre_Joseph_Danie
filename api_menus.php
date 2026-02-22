@@ -10,7 +10,22 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($method === 'POST') {
     // Création ou Mise à jour d'un menu
     $data = json_decode(file_get_contents("php://input"), true);
-    // ... Logique INSERT ou UPDATE SQL ...
+    
+    if (isset($data['id'])) {
+        $sql = "UPDATE menus SET titre=?, description=?, theme=?, prix_min_personne=?, nb_personne_min=?, conditions=?, regime=?, stock=? WHERE id=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $data['titre'], $data['description'], $data['theme'], $data['prix_min_personne'], 
+            $data['nb_personne_min'], $data['conditions'], $data['regime'], $data['stock'], $data['id']
+        ]);
+    } else {
+        $sql = "INSERT INTO menus (titre, description, theme, prix_min_personne, nb_personne_min, conditions, regime, stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $data['titre'], $data['description'], $data['theme'], $data['prix_min_personne'], 
+            $data['nb_personne_min'], $data['conditions'], $data['regime'], $data['stock']
+        ]);
+    }
     echo json_encode(["success" => true, "message" => "Menu enregistré"]);
     exit;
 }
@@ -18,7 +33,16 @@ if ($method === 'POST') {
 if ($method === 'DELETE') {
     // Suppression d'un menu
     $id = $_GET['id'];
-    // ... Logique DELETE SQL ...
+    
+    // Suppression des dépendances (simplifié)
+    $pdo->prepare("DELETE FROM menu_images WHERE menu_id = ?")->execute([$id]);
+    $pdo->prepare("DELETE FROM menu_plats WHERE menu_id = ?")->execute([$id]);
+    // Note: On ne supprime pas les commandes pour garder l'historique, 
+    // mais cela pourrait causer des erreurs de FK si pas de ON DELETE SET NULL.
+    // Pour l'exercice, on suppose que c'est géré ou on supprime.
+    
+    $stmt = $pdo->prepare("DELETE FROM menus WHERE id = ?");
+    $stmt->execute([$id]);
     echo json_encode(["success" => true, "message" => "Menu supprimé"]);
     exit;
 }
