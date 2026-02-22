@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vite & Gourmand - Traiteur d'Exception à Bordeaux</title>
+    <!-- Importation de polices Google Fonts pour un style élégant -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Variables CSS pour la charte graphique --- */
+        :root {
+            --primary-color: #800020; /* Bordeaux profond */
+            --secondary-color: #D4AF37; /* Or élégant */
+            --text-color: #333333;
+            --bg-color: #FDFBF7; /* Blanc cassé chaleureux */
+            --white: #FFFFFF;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* --- Reset et Base --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary-color);
+        }
+
+        /* --- Navigation --- */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 700;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        /* --- Hero Section (Bannière) --- */
+        .hero {
+            /* Image de fond (placeholder culinaire) */
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--white);
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            color: var(--white);
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .btn {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            padding: 12px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #bfa140;
+            transform: translateY(-3px);
+        }
+
+        /* --- Sections Générales --- */
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        section h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background-color: var(--secondary-color);
+            margin: 15px auto 0;
+        }
+
+        /* --- Grille des Menus --- */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .menu-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-top: 5px solid var(--primary-color);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .menu-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .menu-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .price {
+            display: block;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: #1a1a1a;
+            color: #fff;
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- En-tête -->
+    <header>
+        <nav>
+            <div class="logo">Vite & Gourmand</div>
+            <ul>
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#apropos">À propos</a></li>
+                <li><a href="#menus">Nos Menus</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Section Hero -->
+        <section id="accueil" class="hero">
+            <h1>Traiteur à Bordeaux depuis 25 ans</h1>
+            <p>L'art de recevoir avec des plats faits maison pour tous vos événements.</p>
+            <a href="#menus" class="btn">Commander un repas</a>
+        </section>
+
+        <!-- Section À propos -->
+        <section id="apropos">
+            <h2>Qui sommes-nous ?</h2>
+            <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+                <p>Julie et José, passionnés de cuisine, vous proposent leurs services depuis plus de deux décennies. Notre secret ? Des produits frais, locaux et une touche d'amour dans chaque assiette.</p>
+            </div>
+        </section>
+
+        <!-- Section Menus -->
+        <section id="menus">
+            <h2>Nos Menus du moment</h2>
+            <div id="menu-container" class="menu-grid">
+                <!-- Les cartes seront générées ici par JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Pied de page -->
+    <footer id="contact">
+        <p>&copy; 2024 Vite & Gourmand - Réalisé par FastDev</p>
+        <p style="margin-top: 10px; font-size: 0.9rem; color: #aaa;">Bordeaux, France | contact@vite-et-gourmand.fr</p>
+    </footer>
+
+    <!-- Script JavaScript intégré -->
+    <script>
+        // Données des menus (Simule la base de données)
+        const menusData = [
+            {
+                id: 1,
+                titre: "Menu Noël",
+                description: "Dinde rôtie aux marrons, gratin dauphinois truffé, bûche glacée aux fruits rouges et champagne.",
+                prix: 45.00
+            },
+            {
+                id: 2,
+                titre: "Menu Pâques",
+                description: "Gigot d'agneau de 7 heures, poêlée d'asperges vertes et nid de Pâques tout chocolat.",
+                prix: 35.00
+            },
+            {
+                id: 3,
+                titre: "Buffet Estival",
+                description: "Assortiment de salades fraîches, grillades marinées, plateau de fromages et tarte aux fruits de saison.",
+                prix: 25.00
+            }
+        ];
+
+        // Fonction pour commander
+        function commanderMenu(id, titre) {
+            const nom = prompt(`Vous avez choisi le ${titre}.\nPour finaliser, merci d'entrer votre nom :`);
+            if (nom) {
+                const email = prompt("Merci " + nom + " ! Entrez votre email pour recevoir la confirmation :");
+                if (email) {
+                    alert(`Merci ${nom} ! Votre commande pour le "${titre}" a bien été enregistrée.\nUn email de confirmation a été envoyé à ${email}.`);
+                }
+            }
+        }
+
+        // Fonction pour créer une carte HTML
+        function createMenuCard(menu) {
+            const card = document.createElement('div');
+            card.classList.add('menu-card');
+            
+            card.innerHTML = `
+                <h3>${menu.titre}</h3>
+                <p>${menu.description}</p>
+                <span class="price">${menu.prix}€</span>
+                <button class="btn-outline" onclick="commanderMenu(${menu.id}, '${menu.titre.replace(/'/g, "\\'")}')">Commander</button>
+            `;
+            return card;
+        }
+
+        // Chargement des menus au démarrage
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuContainer = document.getElementById('menu-container');
+            if (menuContainer) {
+                menusData.forEach(menu => {
+                    const card = createMenuCard(menu);
+                    menuContainer.appendChild(card);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

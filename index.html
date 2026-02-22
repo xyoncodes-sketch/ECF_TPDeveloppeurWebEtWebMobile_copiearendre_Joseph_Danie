@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vite & Gourmand - Traiteur à Bordeaux</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- En-tête avec Navigation -->
+    <header>
+        <nav>
+            <div class="logo">Vite & Gourmand</div>
+            <ul>
+                <li><a href="#accueil">Accueil</a></li>
+                <li><a href="#apropos">À propos</a></li>
+                <li><a href="#menus">Nos Menus</a></li>
+                <li><a href="#avis">Avis Clients</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#" class="btn-login" id="login-btn">Connexion</a></li>
+                <li id="user-link" style="display:none;"><a href="#dashboard">Mon Espace</a></li>
+                <li id="emp-link" style="display:none;"><a href="#employee-dashboard" style="color: var(--primary-color);">Espace Pro</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Section Hero (Bannière) -->
+        <section id="accueil" class="hero">
+            <h1>Traiteur à Bordeaux depuis 25 ans</h1>
+            <p>L'art de recevoir avec des plats faits maison pour tous vos événements.</p>
+            <a href="#menus" class="btn">Commander un repas</a>
+        </section>
+
+        <!-- Section Présentation -->
+        <section id="apropos">
+            <h2>Notre Expertise & Professionnalisme</h2>
+            <div class="apropos-content">
+                <p>Depuis 25 ans, <strong>Vite & Gourmand</strong> incarne l'excellence culinaire à Bordeaux. Julie et José, forts d'une expérience reconnue, mettent leur savoir-faire au service de vos événements.</p>
+                <p>Nous nous engageons sur la qualité irréprochable de nos produits frais et locaux, ainsi que sur une rigueur sanitaire stricte. Faire appel à notre équipe, c'est choisir la sérénité et l'assurance d'une prestation haut de gamme, gérée par des professionnels passionnés.</p>
+            </div>
+        </section>
+
+        <!-- Section Menus -->
+        <section id="menus">
+            <h2>Nos Menus du moment</h2>
+            <div id="menu-container" class="menu-grid"></div>
+        </section>
+
+        <!-- Section Espace Commande -->
+        <section id="commande">
+            <h2>Espace de Commande</h2>
+            <form id="order-form">
+                <!-- Informations Client -->
+                <h3>Vos Coordonnées</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nom">Nom</label>
+                        <input type="text" id="nom" name="nom" required placeholder="Votre nom">
+                    </div>
+                    <div class="form-group">
+                        <label for="prenom">Prénom</label>
+                        <input type="text" id="prenom" name="prenom" required placeholder="Votre prénom">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required placeholder="votre@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="gsm">GSM</label>
+                        <input type="tel" id="gsm" name="gsm" required placeholder="06 00 00 00 00">
+                    </div>
+                </div>
+
+                <!-- Informations Prestation -->
+                <h3>Détails de la Prestation</h3>
+                <div class="form-group">
+                    <label for="adresse">Adresse de la prestation</label>
+                    <input type="text" id="adresse" name="adresse" required placeholder="Numéro et rue">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ville">Ville</label>
+                        <input type="text" id="ville" name="ville" required placeholder="Ex: Bordeaux">
+                    </div>
+                    <div class="form-group" id="distance-group" style="display:none;">
+                        <label for="distance">Distance depuis Bordeaux (km)</label>
+                        <input type="number" id="distance" name="distance" min="0" step="0.1" value="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date_prestation">Date</label>
+                        <input type="date" id="date_prestation" name="date_prestation" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="heure_livraison">Heure souhaitée</label>
+                        <input type="time" id="heure_livraison" name="heure_livraison" required>
+                    </div>
+                </div>
+
+                <!-- Choix du Menu -->
+                <h3>Votre Menu</h3>
+                <div class="form-group">
+                    <label for="menu-select">Menu sélectionné</label>
+                    <select id="menu-select" name="menu_id" required>
+                        <option value="" disabled selected>-- Choisissez un menu --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="nb_personnes">Nombre de personnes</label>
+                    <input type="number" id="nb_personnes" name="nb_personnes" min="1" required>
+                    <small id="min-personnes-msg" style="color: var(--primary-color);"></small>
+                </div>
+
+                <!-- Récapitulatif Prix -->
+                <div id="price-summary" class="price-summary" style="display:none;">
+                    <h4>Récapitulatif</h4>
+                    <p>Prix Menu : <span id="menu-price-display">0.00</span>€</p>
+                    <p>Réduction (-10%) : <span id="discount-display" style="color: green;">-0.00</span>€</p>
+                    <p>Frais de livraison : <span id="delivery-price-display">0.00</span>€</p>
+                    <hr>
+                    <p class="total-price">Total : <span id="total-price-display">0.00</span>€</p>
+                </div>
+
+                <button type="submit" class="btn">Valider la commande</button>
+            </form>
+        </section>
+
+        <!-- Section Espace Utilisateur (Dashboard) -->
+        <section id="dashboard" style="display:none;">
+            <h2>Mon Espace Utilisateur</h2>
+            <div class="dashboard-container">
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" onclick="showTab('orders')">Mes Commandes</button>
+                    <button class="tab-btn" onclick="showTab('profile')">Mon Profil</button>
+                </div>
+                
+                <div id="tab-orders" class="tab-content">
+                    <!-- Liste des commandes injectée par JS -->
+                    <div id="orders-list"></div>
+                </div>
+
+                <div id="tab-profile" class="tab-content" style="display:none;">
+                    <form id="profile-form">
+                        <div class="form-group">
+                            <label>Nom</label>
+                            <input type="text" id="profile-nom">
+                        </div>
+                        <div class="form-group">
+                            <label>Prénom</label>
+                            <input type="text" id="profile-prenom">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="profile-email">
+                        </div>
+                        <button type="button" class="btn" onclick="alert('Profil mis à jour !')">Enregistrer</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Espace Employé -->
+        <section id="employee-dashboard" style="display:none;">
+            <h2>Espace Employé</h2>
+            <div class="dashboard-container">
+                <div class="dashboard-tabs">
+                    <button class="tab-btn active" onclick="showEmpTab('emp-orders')">Gestion Commandes</button>
+                    <button class="tab-btn" onclick="showEmpTab('emp-menus')">Gestion Menus</button>
+                    <button class="tab-btn" onclick="showEmpTab('emp-reviews')">Modération Avis</button>
+                </div>
+
+                <!-- Onglet Commandes -->
+                <div id="tab-emp-orders" class="tab-content">
+                    <div class="filters">
+                        <select id="filter-status">
+                            <option value="">Tous les statuts</option>
+                            <option value="en_attente">En attente</option>
+                            <option value="accepte">Accepté</option>
+                            <option value="en_preparation">En préparation</option>
+                            <option value="en_cours_livraison">En livraison</option>
+                            <option value="attente_materiel">Attente Matériel</option>
+                        </select>
+                        <input type="text" id="filter-client" placeholder="Rechercher un client...">
+                        <button class="btn" onclick="filterOrders()">Filtrer</button>
+                    </div>
+                    <div id="emp-orders-list" class="admin-table-container"></div>
+                </div>
+
+                <!-- Onglet Menus -->
+                <div id="tab-emp-menus" class="tab-content" style="display:none;">
+                    <button class="btn" onclick="alert('Fonctionnalité Ajouter un menu')">+ Nouveau Menu</button>
+                    <div id="emp-menus-list" class="admin-table-container" style="margin-top:15px;"></div>
+                </div>
+
+                <!-- Onglet Avis -->
+                <div id="tab-emp-reviews" class="tab-content" style="display:none;">
+                    <div id="emp-reviews-list" class="reviews-grid"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Avis Clients -->
+        <section id="avis">
+            <h2>Ils nous font confiance</h2>
+            <div id="reviews-container" class="reviews-grid"></div>
+        </section>
+    </main>
+
+    <!-- Modale Détails Menu (Cachée par défaut) -->
+    <div id="menu-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="modal-body">
+                <!-- Le contenu sera injecté par JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale Annulation Commande -->
+    <div id="cancel-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-modal" onclick="closeCancelModal()">&times;</span>
+            <h3>Annuler la commande</h3>
+            <p>Vous devez avoir contacté le client avant d'annuler.</p>
+            <form id="cancel-form">
+                <input type="hidden" id="cancel-order-id">
+                <div class="form-group">
+                    <label>Mode de contact</label>
+                    <select id="cancel-contact" required>
+                        <option value="GSM">Appel GSM</option>
+                        <option value="Email">Email</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Motif d'annulation</label>
+                    <textarea id="cancel-reason" rows="3" required style="width:100%; padding:10px;"></textarea>
+                </div>
+                <button type="submit" class="btn" style="background-color: #c0392b; margin-top:10px;">Confirmer l'annulation</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Pied de page -->
+    <footer id="contact">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Vite & Gourmand</h3>
+                <p>Bordeaux, France</p>
+                <p>contact@vite-et-gourmand.fr</p>
+            </div>
+            <div class="footer-col">
+                <h3>Horaires</h3>
+                <p>Lundi - Dimanche : 09h00 - 20h00</p>
+            </div>
+            <div class="footer-col">
+                <h3>Informations</h3>
+                <p><a href="#">Mentions Légales</a></p>
+                <p><a href="#">CGV</a></p>
+            </div>
+        </div>
+        <p class="copyright">&copy; 2024 Vite & Gourmand - Réalisé par FastDev</p>
+    </footer>
+    <script src="js/script.js"></script>
+</body>
+</html>
